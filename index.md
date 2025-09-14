@@ -1,3 +1,7 @@
+---
+layout: none
+---
+
 # Welcome to Our Onboarding Site 🎉
 
 This page is powered by **GitHub Pages**.  
