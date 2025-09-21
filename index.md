@@ -1,10 +1,6 @@
 ---
-layout: none
+layout: default
+title: Home
 ---
 
-# Welcome to Our Onboarding Site 🎉
-
-This page is powered by **GitHub Pages**.  
-You can write in Markdown _and_ include HTML.
-
-<button class="btn">Click Me</button>
+# Welcome to the QKRT Software Team!

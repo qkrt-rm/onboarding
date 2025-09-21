@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ site.title }} | {{ page.title }}</title>
+        <link
+            rel="stylesheet"
+            href="{{ '/assets/style.css' | relative_url }}"
+        />
+    </head>
+    <body>
+        <header class="container site-header">
+            <a class="header-brand" href="{{ '/' | relative_url }}">
+                <img
+                    class="header-logo"
+                    src="{{ '/assets/logo.svg' | relative_url }}"
+                    alt="Logo"
+                />
+                <span class="header-text">QKRT</span>
+            </a>
+            <nav>
+                <a href="{{ '/' | relative_url }}">Home</a>
+                <a href="{{ '/onboarding/getting-started' | relative_url }}"
+                    >Onboarding</a
+                >
+                <a href="{{ '/documentation' | relative_url }}"
+                    >Documentation</a
+                >
+                <a href="{{ '/about' | relative_url }}">About</a>
+            </nav>
+        </header>
+        <div class="page-wrapper">
+            <main class="content">{{ content }}</main>
+        </div>
+    </body>
+</html>

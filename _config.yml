@@ -1,1 +1,4 @@
-theme: jekyll-theme-minimal
+title: "Queens Knights"
+baseurl: "/onboarding"
+url: "https://qkrt-rm.github.io"
+logo: "/assets/logo.svg"

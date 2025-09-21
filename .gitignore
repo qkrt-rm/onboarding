@@ -1,0 +1,18 @@
+# Jekyll build output
+_site/
+
+# Jekyll caches
+.jekyll-cache/
+.sass-cache/
+.jekyll-metadata
+
+# Ruby / Bundler
+vendor/
+.bundle/
+Gemfile.lock
+
+# macOS cruft
+.DS_Store
+
+# VS Code settings
+.vscode/
