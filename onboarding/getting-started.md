@@ -25,3 +25,10 @@ C++ is our programming language of choice when it comes to developing drive cont
 All of our control code will be written to run on the [RoboMaster Development Board Type C](https://www.robomaster.com/en-US/products/components/general/development-board-type-c/info), a small computer that sits on each of our robots. We will refer to this computer as our **target board**.
 
 STM32
+
+### TAPROOT Introduction
+
+The 
+
+- [](https://aruw.gitlab.io/controls/aruw-edu/tutorials/1_tank_drive.html)
+- 
