@@ -26,9 +26,13 @@ All of our control code will be written to run on the [RoboMaster Development Bo
 
 STM32
 
-### TAPROOT Introduction
+### Taproot API Introduction
 
-The 
+The Taproot API is the software interface that lets us control and communicate with the RoboMaster robot.
+It’s like a bridge between our code and the robot’s hardware — we write code using Taproot functions, and those commands get sent to the robot to make it move, turn, shoot, and read sensors.
 
-- [](https://aruw.gitlab.io/controls/aruw-edu/tutorials/1_tank_drive.html)
-- 
+We shall be making a modified version of the Tank Drive tutorial made by the University of Washington.
+
+- [University of Washington Guide Wiki](https://aruw.gitlab.io/controls/aruw-edu/tutorials/1_tank_drive.html)
+- [University of Washington Tutorial Code Github](https://gitlab.com/aruw/controls/aruw-edu)
+- [University of Washington Tutorial Code Solutions](https://gitlab.com/aruw/controls/aruw-edu/-/tree/solutions?ref_type=heads)
