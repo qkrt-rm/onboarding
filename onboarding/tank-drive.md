@@ -1,5 +1,39 @@
+- [Introduction](#introduction)
+  - [Getting the Starter Code](#getting-the-starter-code)
+  - [Context of the Code Structure](#context-of-the-code-structure)
+- [Tank Drive Tutorial](#tank-drive-tutorial)
+  - [Hardware](#hardware)
+  - [Code Architecture](#code-architecture)
+    - [Subsystems](#subsystems)
+    - [Commands](#commands)
+  - [Installing the Development Environment](#installing-the-development-environment)
+  - [Notes Before Beginning](#notes-before-beginning)
+  - [Overview](#overview)
+  - [Step 1: Control Operator Interface](#step-1-control-operator-interface)
+    - [Declare Functions for Processing Remote Input](#declare-functions-for-processing-remote-input)
+    - [Implement the Declared Functions](#implement-the-declared-functions)
+  - [Step 2: ChassisSubsystem](#step-2-chassissubsystem)
+    - [Implement Constructor and Initialize Members](#implement-constructor-and-initialize-members)
+    - [Implement the `initialize` Function](#implement-the-initialize-function)
+    - [Implement the `setVelocityTankDrive` Function](#implement-the-setvelocitytankdrive-function)
+    - [Implement the `refresh` Function](#implement-the-refresh-function)
+  - [Step 3: ChassisTankDriveCommand](#step-3-chassistankdrivecommand)
+    - [Implement the Constructor and Initialize Members](#implement-the-constructor-and-initialize-members)
+    - [Implement the `execute` Function](#implement-the-execute-function)
+    - [Implement the `end` Function](#implement-the-end-function)
+  - [Step 4: Robot](#step-4-robot)
+    - [Declare `ChassisSubsystem` as a Private Member](#declarechassissubsystem-as-a-private-member)
+    - [Declare `ChassisTankDriveCommand` as a Private Member](#declare-chassistankdrivecommand-as-a-private-member)
+    - [Implement Constructor and Initialize Members](#implement-constructor-and-initialize-members-1)
+    - [Finish Implementing the `initializeSubsystems` Function](#finish-implementing-the-initializesubsystems-function)
+    - [Finish Implementing the `registerSoldierSubsystems` Function](#finish-implementing-the-registersoldiersubsystems-function)
+    - [Finish Implementing the `setDefaultSoldierCommands` Function](#finish-implementing-the-setdefaultsoldiercommands-function)
 
-# Tank Drive Tutorial
+
+
+
+
+# Introduction
 In this meeting we will be walking through the entirety of the Tank Drive Tutorial provided by the University of Washington. This tutorial is highly relevant to us because both our codebase and the tutorial code rely on the Taproot framework also provided by the Univerisity of Washington.
 
 This meeting is also an opportunity for you to ask questions related to C++. Feel free at any point during the meeting to raise your hand and ask a question.
@@ -46,7 +80,7 @@ This tutorial, as well as our codebase, relies on Taproot, a framework that faci
 
 
 
-# Tutorial
+# Tank Drive Tutorial
 ## Hardware
 
 The chassis is a fundamental subsystem for many RoboMaster robots. Our 2022
