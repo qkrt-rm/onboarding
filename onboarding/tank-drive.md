@@ -146,6 +146,181 @@ To interact with the robot, the command will request access to an "active" subsy
 
 Note that command instances are re-used: a single command could be initialized, run, finished, then later initialized again. Ensure that `initialize()` resets any state stored in the command!
 
+
+## Installing the Development Environment
+
+Before starting this tutorial, you must install the development environment.
+Please refer to the README's ["New user
+guide"](https://gitlab.com/aruw/controls/aruw-edu#new-user-guide) section to set
+up aruw-edu.
+
+Once you have installed aruw-edu, create a git branch on the repository with
+some reasonable name. This is where you will be developing software for this
+tutorial.
+
+Reference [this Git
+tutorial](https://gitlab.com/aruw/controls/taproot/-/wikis/Git-Tutorial) for
+information about cloning, creating, and checking out a new branch if you are
+unfamiliar with using Git.
+
+## Notes Before Beginning
+
+- This tutorial is not a comprehensive of C++ or the codebase. It is designed to
+  guide your learning in a structured manner. As you go through this tutorial,
+  it is expected that you work with others, ask leads questions about parts, and
+  most importantly, search the internet for various questions that are not
+  specific to the project. There is a plethora of information about C++ and C++
+  tutorials you can refer to as you work through these tutorials.
+
+- As you start working through this tutorial, **build your code often**. Refer
+  to the ["Building and running via the
+  terminal"](https://gitlab.com/aruw/controls/aruw-edu#building-and-running-via-the-terminal)
+  section in aruw-edu's readme for more information about building the repo.
+  This will help tremendously because it allows you to easily identify where
+  errors are coming from. Unlike some IDEs, VSCode Intellisense is not always
+  accurate and will sometimes not identify errors (especially more complex,
+  annoying ones). So, please, please build often.
+
+- The library that you will be using to develop your chassis tank drive software
+  is called
+  [taproot](https://gitlab.com/aruw/controls/taproot/-/wikis/definitions#taproot).
+  Please look over the section called ["Code Generated in User
+  Projects"](https://gitlab.com/aruw/controls/taproot/-/wikis/Code-Generation-in-User-Projects)
+  in the taproot wiki. In aruw-edu, taproot is included as a git submodule at
+  the top level of the repository. Generated taproot software that you will be
+  interacting with is located in `./aruw-edu/aruw-edu-project/taproot`.
+
+- If you are stuck on some part of this tutorial, please reach out for help.
+  Solutions are available; however, these should not be referenced unless
+  absolutely necessary. Doing so defeats the purpose of this tutorial.
+
+- Various C++ tips that are not specific to our codebase will be in a "tip"
+  block.
+
+## Overview
+
+During this project, you will be developing software in
+`./aruw-edu/aruw-edu-project/src`. This wiki will guide you through finishing a
+variety of incomplete subsystems and commands. Next is a description of each
+section you will be developing.
+
+- **`ControlOperatorInterface`**: Accesses inputs provided by a user from the
+  [remote](https://gitlab.com/aruw/controls/taproot/-/wikis/definitions#remote).
+  Provides an abstraction layer between remote input and user control used in
+  commands (commands won't interact with the `Remote` object--rather they will
+  call functions from the `ControlOperatorInterface` object). For example, the
+  operator interface translates "move the left stick up and right stick down" to
+  "I want to turn left".
+
+- **`ChassisSubsystem`**: A subsystem that "owns" the four chassis drive motors.
+  Interprets chassis movement directives sent by a command that is running and
+  sends motor control commands to the motors. For example, a command will direct
+  the chassis subsystem to move forward at 1 m/s. The subsystme will convert
+  this directive into desired motor output commands for all four motors. 
+
+- **`ChassisTankDriveCommand`**: Translates user input ("I want to turn left")
+  into instructions that the `ChassisSubsystem` can understand.
+
+- **`Robot`**: Where instances of the `ChassisSubsystem`,
+  `ChassisTankDriveCommand`, and other control-related object instances are
+  instantiated.
+
+
+<div style="padding: 1rem; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin: 1rem 0;"> 
+<b>Tip:</b>
+In C++, pointers, references, and variables are two very important
+concepts that you must understand to successfully complete this tutorial.
+Often, tutorials might state something like "pass variable X to function Y."
+This statement in itself may be ambiguous, as the function may expect the 
+variable to be passed as a pointer, reference, or raw variable. In order to
+follow such an instruction, you must be able to understand how you are passing
+variable X, be that as a reference, pointer, or variable. If you do not have
+experience with C++ pointers, review [this slideshow](https://courses.cs.washington.edu/courses/cse333/20sp/lectures/03-c-pointers.pdf).
+If you do not have experience with C++ references, review [this slideshow](https://courses.cs.washington.edu/courses/cse333/20sp/lectures/11-c++-refs-const-classes.pdf).
+It is not expected that you are a master of pointers, references, and variables
+before starting this tutorial, but it generally useful to have a base
+understanding of how they work.
+
+To test your understanding, answer the following questions:
+
+  - Label `foo`, `bar`, and `baz` as pointers, references, or variables.
+    ```cpp
+    void function()
+    {
+      int foo{42};
+      int *bar = &foo;
+      int &baz = foo;
+    }
+    ```
+    <details>
+    <summary>Answer</summary>
+      <code>foo</code>: variable<br>
+      <code>bar</code>: pointer<br>
+      <code>baz</code>: reference
+    </details>
+
+  - In the function `f1` defined below, how would you call `f2`, `f3`, and `f4`
+    respectively, passing the variable `foo` to these three functions?
+    ```cpp
+    void f2(int var)
+    {
+      // Print var and address of var
+      std::cout << var << ", " << &var << std::endl;
+    }
+
+    void f3(int *var)
+    {
+      // Print var and address of var
+      std::cout << *var << ", " << var << std::endl;
+    }
+
+    void f4(int &var)
+    {
+      // Print var and address of var
+      std::cout << var << ", " << &var << std::endl;
+    }
+
+    void f1()
+    {
+      int foo{42};
+      // Now call f2, f3, and f4, passing foo to each.
+    }
+    ```
+    <details>
+    <summary>Answer</summary>
+    <code>f2(foo)</code>, <code>f3(&foo)</code>, <code>f4(foo)</code>
+    </details>
+
+    Bonus question, will `f2`, `f3` and `f4` print identical values when the
+    functions above are called from `f1()`?
+
+    <details>
+    <summary>Answer</summary>
+    No, <code>f2</code> will print a different result compared to <code>f3</code> and <code>f4</code>. While <code>var</code>
+    contains the same value in all three functions, the address of <code>var</code> is not the same in <code>f2</code>'s case since a copy of foo is
+    being created for <code>f2</code> when you pass <code>foo</code> as a variable instead of a pointer
+    or reference.
+    </details>
+
+    Assume `f1()` has now been changed to the following:
+    ```cpp
+    void f1()
+    {
+      int *foo = new int(42);
+      // Now call f2, f3, and f4, passing foo to each
+      delete foo;
+    }
+    ```
+    How would you call `f2`, `f3`, and `f4` respectively, passing the variable
+    `foo` to these three functions?
+
+    <details>
+    <summary>Answer</summary>
+    <code>f2(*foo)</code>, <code>f3(foo)</code>, <code>f4(*foo)</code>
+    </details>
+</div>
+
+
 ## Step 1: Control Operator Interface
 
 The control operator interface is an interface used to interpret remote and/or keyboard state values to be used by commands.
