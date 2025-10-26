@@ -1,7 +1,4 @@
----
----
 
-@import "{{ site.theme }}";
 # Tank Drive Tutorial
 In this meeting we will be walking through the entirety of the Tank Drive Tutorial provided by the University of Washington. This tutorial is highly relevant to us because both our codebase and the tutorial code rely on the Taproot framework also provided by the Univerisity of Washington.
 
@@ -69,7 +66,84 @@ To interact with the robot, the command will request access to an "active" subsy
 
 Note that command instances are re-used: a single command could be initialized, run, finished, then later initialized again. Ensure that `initialize()` resets any state stored in the command!
 
----
+
+
+# Modified University of Washington Tutorial
+## Hardware
+
+The chassis is a fundamental subsystem for many RoboMaster robots. Our 2022
+standard chassis consists of the following hardware:
+
+- Main microcontroller. The
+  [microcontroller](https://en.wikipedia.org/wiki/Microcontroller) used on the
+  standard is the [RoboMaster type A Board (aka
+  MCB)](https://gitlab.com/aruw/controls/taproot/-/wikis/Definitions#main-control-board-mcb). *(QRKT uses Type C)*
+  The microcontroller has peripherals to interact with all other hardware
+  subsystems including the chassis subsystem.
+- Power distribution board (the RoboMaster [Power Management
+  Module](https://www.robomaster.com/en-US/products/components/detail/1432) is
+  used). This module provides power to all electronic systems on the robot,
+  including the microcontroller and chassis motors.
+- Four motor controllers ([RoboMaster C620 motor
+  controllers](https://store.dji.com/product/rm-c620-brushless-dc-motor-speed-controller)).
+  The motor controllers are wired to the microcontroller so the main
+  microcontroller can send commands to the motor controllers using a protocol
+  called
+  [CAN](https://gitlab.com/aruw/controls/taproot/-/wikis/Definitions#controller-area-network-can).
+  Furthermore, the motor controllers send motor information to the main
+  microcontroller using the same protocol. This includes information such as the
+  measured velocity of the motor and the motor shaft's rotational position. More
+  information about the motor controller may be found in the [C620
+  datasheet](https://rm-static.djicdn.com/tem/17348/RoboMaster%20C620%20Brushless%20DC%20Motor%20Speed%20Controller%20V1.01.pdf).
+- Four motors ([RoboMaster M3508
+  motors](https://www.robomaster.com/en-US/products/components/general/M3508)).
+  Each motor is connected to the motor controller. The motor takes commands from
+  the motor controller and sends information back to the motor controller. Each
+  motor is connected to a [mecanum
+  wheel](https://en.wikipedia.org/wiki/Mecanum_wheel).
+- Remote control receiver. The [DR-16
+  receiver](https://www.robomaster.com/en-US/products/components/detail/1837) is
+  used to wirelessly receive remote control information from a paired
+  [remote](https://gitlab.com/aruw/controls/taproot/-/wikis/Definitions#remote).
+
+  ![Tank Drive Chassis](../assets/images/tankdrive/tankdrive_chassis.png)
+
+## Code Architecture
+
+The robot we develop is complicated, so we attempt to keep our work sane by
+using an architecture that we have developed previously that does some of the
+tedious and more challenging operations for us. This curriculum focuses only on
+learning the basics of using **subsystems** and **commands** (our high level
+control architecture), as well as the **operator interface**, which interprets
+remote and computer input and allows a user to control the robot. There is a lot
+more that goes into controlling the robot that we will glaze over in this
+tutorial.
+
+Much of the subsystem and command framework developed previously was at a high
+level based on FIRST programming. There is a good explanation of how subsystems
+and commands work
+[here](https://docs.wpilib.org/en/latest/docs/software/commandbased/what-is-command-based.html).
+On this page, you should read the following sections:
+- What Is "Command-Based" Programming?
+- Subsystems and Commands
+- How Commands Are Run
+
+In addition, I recommend looking at the following pages:
+- [Subsystems](https://docs.wpilib.org/en/latest/docs/software/commandbased/subsystems.html)
+- [Commands](https://docs.wpilib.org/en/latest/docs/software/commandbased/commands.html)
+- [The Command
+  Scheduler](https://docs.wpilib.org/en/latest/docs/software/commandbased/command-scheduler.html)
+
+Note though that while our code is not designed exactly like what is found in
+FIRST, the ideas are similar. Our implementation of command groups, for example,
+is very different.
+
+For more information about our implementation of the command/subsystem
+framework, see [this taproot wiki
+page](https://gitlab.com/aruw/controls/taproot/-/wikis/Command-Subsystem-Framework).
+Our implementation is not close to perfect, but hopefully you will be able to
+improve it some time in the future!
+
 
 ## Step 1: Control Operator Interface
 
@@ -96,8 +170,8 @@ private:
 };
 ```
 
-<div class="hiding">
-test
+<details>
+<summary>Click to show the solution</summary>
 
 ```cpp
 class ControlOperatorInterface
@@ -114,8 +188,8 @@ private:
 tap::communication::serial::Remote &remote;
 };
 ```
+</details>
 
-</div>
      
 
 ### Implement the Declared Functions
@@ -137,31 +211,30 @@ ControlOperatorInterface::ControlOperatorInterface(Remote &remote)
 }  // namespace control
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control
->     {
->     ControlOperatorInterface::ControlOperatorInterface(Remote &remote)
->     				: remote(remote) {}
->     
->     /* your code here... */
->     float ControlOperatorInterface::getChassisTankLeftInput()
->     {
->     		return remote.getChannel(Remote::Channel::LEFT_VERTICAL);
->     }
->     
->     float ControlOperatorInterface::getChassisTankLeftInput()
->     {
->     		return remote.getChannel(Remote::Channel::RIGHT_VERTICAL);
->     }
->     /* ================= */
->     
->     }  // namespace control
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control
+{
+ControlOperatorInterface::ControlOperatorInterface(Remote &remote)
+				: remote(remote) {}
+
+/* your code here... */
+float ControlOperatorInterface::getChassisTankLeftInput()
+{
+		return remote.getChannel(Remote::Channel::LEFT_VERTICAL);
+}
+
+float ControlOperatorInterface::getChassisTankLeftInput()
+{
+		return remote.getChannel(Remote::Channel::RIGHT_VERTICAL);
+}
+/* ================= */
+
+}  // namespace control
+```
+</details>
 
 ## Step 2: ChassisSubsystem
 
