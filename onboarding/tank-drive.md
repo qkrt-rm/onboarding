@@ -1,9 +1,18 @@
----
-layout: onboarding
-title: Tank Drive
----
-# Tank Drive Tutorial
+<style>
+.hiding:not(:hover) {
+    filter:blur(1em);
+}
+.warninglabel {
+    style="padding: 1rem; 
+    background-color: #fff3cd; 
+    border: 1px solid #ffeaa7; 
+    border-radius: 4px; 
+    margin: 1rem 0;"
+}
 
+</style>
+
+# Tank Drive Tutorial
 In this meeting we will be walking through the entirety of the Tank Drive Tutorial provided by the University of Washington. This tutorial is highly relevant to us because both our codebase and the tutorial code rely on the Taproot framework also provided by the Univerisity of Washington.
 
 This meeting is also an opportunity for you to ask questions related to C++. Feel free at any point during the meeting to raise your hand and ask a question.
@@ -20,10 +29,9 @@ Here are the resources relevant to the Tank Drive Tutorial:
 
 ## Getting the Starter Code
 
-<aside>
-⚠️
-
-The Tank Drive Tutorial project configuration is not set up for our robots. If you are curious about what needs tweaking, let @Hunter Coker or @Armaan know, but it’s not important for now.
+<div class="warninglabel">
+  <strong>⚠️ Disclaimer:</strong> The Tank Drive Tutorial project configuration is not set up for our robots. We will be covering what files and settings to change once we proceed to the flashing the code.
+</div>
 
 </aside>
 
@@ -51,7 +59,7 @@ This tutorial, as well as our codebase, relies on Taproot, a framework that faci
 
 ### Subsystems
 
-A subsystem ****is a core organizational unit that encapsulates a group of related inputs and/or outputs. Let’s use a wrist mechanism an an example of a subsystem. 
+A subsystem is a core organizational unit that encapsulates a group of related inputs and/or outputs. Let’s use a wrist mechanism an an example of a subsystem. 
 
 The `WristSubsystem` class contains code necessary for controlling the wrist motors. The API that the subsystem exposes is intended to describe the meaningful behaviors of the robot’s wrist component (i.e. think "open the claw", not "activate piston 4"). It is often the case that a single, externally-visible behavior of a subsystem is composed of many internal steps. This level of encapsulation allows us to easily modify and debug individual parts of the robot code without impacting other parts.
 
@@ -83,6 +91,7 @@ It is useful in cases where commands need to accept user input in addition to th
 
 Declare the functions `getChassisTankLeftInput` and `getChassisTankRightInput`. Both functions should be declared as public members of the `ControlOperatorInterface` class, not take any parameters, and return a `float`.
 
+
 ```cpp
 class ControlOperatorInterface
 {
@@ -97,26 +106,27 @@ private:
 };
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     class ControlOperatorInterface
->     {
->     public:
->         ControlOperatorInterface(tap::communication::serial::Remote &remote);
->     
->         /* your code here... */
->         float getChassisTankLeftInput();
->         
->         float getChassisTankRightInput();
->         /* ================= */
->     private:
->         tap::communication::serial::Remote &remote;
->     };
->     ```
->     
+<div class="hiding">
+test
+
+```cpp
+class ControlOperatorInterface
+{
+public:
+ControlOperatorInterface(tap::communication::serial::Remote &remote);
+
+/* your code here... */
+float getChassisTankLeftInput();
+
+float getChassisTankRightInput();
+/* ================= */
+private:
+tap::communication::serial::Remote &remote;
+};
+```
+
+</div>
+     
 
 ### Implement the Declared Functions
 
