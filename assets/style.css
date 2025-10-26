@@ -150,13 +150,25 @@ a:hover {
     overflow-y: auto;
 }
 
+
+
+
+
+/*
+Attempt for spoiler code workaround
+Doesn't seem to be working
+Delete later
+ */
 .hiding:not(:hover) {
     filter:blur(1em);
 }
 .warninglabel {
-    style="padding: 1rem; 
+    padding: 1rem; 
     background-color: #fff3cd; 
     border: 1px solid #ffeaa7; 
     border-radius: 4px; 
     margin: 1rem 0;"
 }
+/*
+End of attempt
+*/
