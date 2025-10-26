@@ -16,7 +16,7 @@ Here are the resources relevant to the Tank Drive Tutorial:
 
 ## Getting the Starter Code
 
-<div class="warninglabel">
+<div style="padding: 1rem; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin: 1rem 0;">
   <strong>⚠️ Disclaimer:</strong> The Tank Drive Tutorial project configuration is not set up for our robots. We will be covering what files and settings to change once we proceed to the flashing the code.
 </div>
 
@@ -44,31 +44,9 @@ code .
 
 This tutorial, as well as our codebase, relies on Taproot, a framework that facilitates command-based programming. it provides a structured approach to organizing robot control code by dividing it into discrete commands and subsystems, enhancing modularity and reusability
 
-### Subsystems
-
-A subsystem is a core organizational unit that encapsulates a group of related inputs and/or outputs. Let’s use a wrist mechanism an an example of a subsystem. 
-
-The `WristSubsystem` class contains code necessary for controlling the wrist motors. The API that the subsystem exposes is intended to describe the meaningful behaviors of the robot’s wrist component (i.e. think "open the claw", not "activate piston 4"). It is often the case that a single, externally-visible behavior of a subsystem is composed of many internal steps. This level of encapsulation allows us to easily modify and debug individual parts of the robot code without impacting other parts.
-
-A class diagram showing the basic functionality of our example `WristSubsystem` class is shown below:
-
-![tankdrive_wristsubsystem.png](../assets/images/tankdrive/tankdrive_wristsubsystem.png)
-
-The top section of the diagram illustrates what this subsystem encapsulates (internal variables),
-while the bottom section illustrates the public API (methods) that a wrist subsystem may have for a command to interact with.
-
-### Commands
-
-A command defines an action that the robot should perform. The idea is that command-based
-programming should allow one writing a `Command` class to focus on what hardware should do instead of how. While the subsystem takes care of how a robot should accomplish some goal, at the command level, we only care about requesting that the robot do some task.
-
-To interact with the robot, the command will request access to an "active" subsystem and tell it what to do. Building on the example of the `WristSubsystem` described in the above section, a command to "move the wrist to a grabbing position" would be responsible for calling the subsystem's `ExtendWrist()` function when appropriate.
-
-Note that command instances are re-used: a single command could be initialized, run, finished, then later initialized again. Ensure that `initialize()` resets any state stored in the command!
 
 
-
-# Modified University of Washington Tutorial
+# Tutorial
 ## Hardware
 
 The chassis is a fundamental subsystem for many RoboMaster robots. Our 2022
@@ -145,6 +123,29 @@ Our implementation is not close to perfect, but hopefully you will be able to
 improve it some time in the future!
 
 
+
+### Subsystems
+
+A subsystem is a core organizational unit that encapsulates a group of related inputs and/or outputs. Let’s use a wrist mechanism an an example of a subsystem. 
+
+The `WristSubsystem` class contains code necessary for controlling the wrist motors. The API that the subsystem exposes is intended to describe the meaningful behaviors of the robot’s wrist component (i.e. think "open the claw", not "activate piston 4"). It is often the case that a single, externally-visible behavior of a subsystem is composed of many internal steps. This level of encapsulation allows us to easily modify and debug individual parts of the robot code without impacting other parts.
+
+A class diagram showing the basic functionality of our example `WristSubsystem` class is shown below:
+
+![tankdrive_wristsubsystem.png](../assets/images/tankdrive/tankdrive_wristsubsystem.png)
+
+The top section of the diagram illustrates what this subsystem encapsulates (internal variables),
+while the bottom section illustrates the public API (methods) that a wrist subsystem may have for a command to interact with.
+
+### Commands
+
+A command defines an action that the robot should perform. The idea is that command-based
+programming should allow one writing a `Command` class to focus on what hardware should do instead of how. While the subsystem takes care of how a robot should accomplish some goal, at the command level, we only care about requesting that the robot do some task.
+
+To interact with the robot, the command will request access to an "active" subsystem and tell it what to do. Building on the example of the `WristSubsystem` described in the above section, a command to "move the wrist to a grabbing position" would be responsible for calling the subsystem's `ExtendWrist()` function when appropriate.
+
+Note that command instances are re-used: a single command could be initialized, run, finished, then later initialized again. Ensure that `initialize()` resets any state stored in the command!
+
 ## Step 1: Control Operator Interface
 
 The control operator interface is an interface used to interpret remote and/or keyboard state values to be used by commands.
@@ -155,6 +156,11 @@ It is useful in cases where commands need to accept user input in addition to th
 
 Declare the functions `getChassisTankLeftInput` and `getChassisTankRightInput`. Both functions should be declared as public members of the `ControlOperatorInterface` class, not take any parameters, and return a `float`.
 
+<div style="padding: 1rem; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin: 1rem 0;">Tip:
+Use F12 to go to the definitions in code.
+
+![Tank Drive Tip 1](../assets/images/tankdrive/tankdrive_tip1.png)
+</div>
 
 ```cpp
 class ControlOperatorInterface
