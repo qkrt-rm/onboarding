@@ -3,7 +3,7 @@
     filter:blur(1em);
 }
 .warninglabel {
-    style="padding: 1rem; 
+    padding: 1rem; 
     background-color: #fff3cd; 
     border: 1px solid #ffeaa7; 
     border-radius: 4px; 
@@ -11,6 +11,11 @@
 }
 
 </style>
+
+<p onmouseover="this.style.color='yellow'" onmouseout="this.style.color=''" >
+  Hover over me!
+</p>
+
 
 # Tank Drive Tutorial
 In this meeting we will be walking through the entirety of the Tank Drive Tutorial provided by the University of Washington. This tutorial is highly relevant to us because both our codebase and the tutorial code rely on the Taproot framework also provided by the Univerisity of Washington.
