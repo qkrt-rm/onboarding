@@ -149,3 +149,14 @@ a:hover {
     flex: 1;
     overflow-y: auto;
 }
+
+.hiding:not(:hover) {
+    filter:blur(1em);
+}
+.warninglabel {
+    style="padding: 1rem; 
+    background-color: #fff3cd; 
+    border: 1px solid #ffeaa7; 
+    border-radius: 4px; 
+    margin: 1rem 0;"
+}
