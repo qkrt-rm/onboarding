@@ -357,6 +357,47 @@ To test your understanding, answer the following questions:
 
 ## Step 1: Control Operator Interface
 
+Declare the functions `getChassisTankLeftInput` and `getChassisTankRightInput`.
+The two functions you create should have 0 function parameters and return a
+`float`.
+
+The functions should be declared as public members of the
+`ControlOperatorInterface` class. The function should return a value between
+`[-1 ,1]`.
+
+In general, functions are _declared_ in headers (`.hpp` files) and _defined_ in
+source files (`.cpp` files). The operator interface is no exception (for
+reference refer to [this Stack Overflow
+post](https://stackoverflow.com/questions/25274312/is-it-a-good-practice-to-define-c-functions-inside-header-files)).
+
+
+> You can think of "declaring" a function as a way of documenting
+the blueprint of a function for others to then use. The declaration will include the name of the function, return value, and input parameters. The declaration **will not** contain any of the actual logic. On the other hand, "defining" afunction can be thought of as the actual meat of the function that gives the function meaning. An outside observer may use a declared function without knowing the actual meat of the function as long as they know the declaration.
+
+For example, in the example class below, the function `greatFunction` has been
+declared as a public member function of the class `Example`.
+
+This is because `greatFunction` is declared in the example class within the
+section with `public` at the top.
+
+```cpp
+// example.hpp
+
+class Example {
+public:
+  void greatFunction();  // Declaration
+};
+
+-----------------------------
+// example.cpp
+
+void Example::greatFunction() {  // Definition
+  // Do great things
+}
+```
+
+
+
 The control operator interface is an interface used to interpret remote and/or keyboard state values to be used by commands.
 
 It is useful in cases where commands need to accept user input in addition to the scheduler's start/stop command mappings. A chassis command, for example, could be running continuously and then interact with the control operator interface to receive remote input to tell the chassis to move.
@@ -441,7 +482,7 @@ float ControlOperatorInterface::getChassisTankLeftInput()
 		return remote.getChannel(Remote::Channel::LEFT_VERTICAL);
 }
 
-float ControlOperatorInterface::getChassisTankLeftInput()
+float ControlOperatorInterface::getChassisTankRightInput()
 {
 		return remote.getChannel(Remote::Channel::RIGHT_VERTICAL);
 }
@@ -450,6 +491,7 @@ float ControlOperatorInterface::getChassisTankLeftInput()
 }  // namespace control
 ```
 </details>
+
 
 ## Step 2: ChassisSubsystem
 
@@ -571,38 +613,37 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     
->     // STEP 1 (Tank Drive): create constructor
->     ChassisSubsystem::ChassisSubsystem(Drivers& drivers,
->                                        const ChassisConfig& config)
->         : tap::control::Subsystem(&drivers),
->           desiredOutput{},
->           pidControllers{},
->           motors{
->               Motor(&drivers, config.leftFrontId, config.canBus, false, "LF"),
->               Motor(&drivers, config.leftBackId, config.canBus, false, "LB"),
->               Motor(&drivers, config.rightBackId, config.canBus, true, "RB"),
->               Motor(&drivers, config.rightFrontId, config.canBus, true, "RF"),
->           }
->     {
->         for (auto& controller : pidControllers)
->         {
->             controller.setParameter(config.wheelVelocityPidConfig);
->         }
->     }
->     /* ==================================== */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+
+// STEP 1 (Tank Drive): create constructor
+ChassisSubsystem::ChassisSubsystem(Drivers& drivers,
+                                   const ChassisConfig& config)
+    : tap::control::Subsystem(&drivers),
+      desiredOutput{},
+      pidControllers{},
+      motors{
+          Motor(&drivers, config.leftFrontId, config.canBus, false, "LF"),
+          Motor(&drivers, config.leftBackId, config.canBus, false, "LB"),
+          Motor(&drivers, config.rightBackId, config.canBus, true, "RB"),
+          Motor(&drivers, config.rightFrontId, config.canBus, true, "RF"),
+      }
+{
+    for (auto& controller : pidControllers)
+    {
+        controller.setParameter(config.wheelVelocityPidConfig);
+    }
+}
+/* ==================================== */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ### Implement the `initialize` Function
 
@@ -640,29 +681,28 @@ namespace control::chassis
 
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     /* ... */
->     
->     // STEP 2 (Tank Drive): initialize function
->     void ChassisSubsystem::initialize()
->     {
->         for (auto& motor : motors)
->         {
->             motor.initialize();
->         }
->     }
->     /* ===================================== */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+/* ... */
+
+// STEP 2 (Tank Drive): initialize function
+void ChassisSubsystem::initialize()
+{
+    for (auto& motor : motors)
+    {
+        motor.initialize();
+    }
+}
+/* ===================================== */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ### Implement the `setVelocityTankDrive` Function
 
@@ -719,35 +759,34 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     /* ... */
->     
->     // STEP 3 (Tank Drive): setVelocityTankDrive function
->     void ChassisSubsystem::setVelocityTankDrive(float left, float right)
->     {
->         left = mpsToRpm(left);
->         right = mpsToRpm(right);
->     
->         left = limitVal(left, -MAX_WHEELSPEED_RPM, MAX_WHEELSPEED_RPM);
->         right = limitVal(right, -MAX_WHEELSPEED_RPM, MAX_WHEELSPEED_RPM);
->     
->         desiredOutput[static_cast<uint8_t>(MotorId::LF)] = left;
->         desiredOutput[static_cast<uint8_t>(MotorId::LB)] = left;
->         desiredOutput[static_cast<uint8_t>(MotorId::RB)] = right;
->         desiredOutput[static_cast<uint8_t>(MotorId::RF)] = right;
->     }
->     /* =============================================== */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+/* ... */
+
+// STEP 3 (Tank Drive): setVelocityTankDrive function
+void ChassisSubsystem::setVelocityTankDrive(float left, float right)
+{
+    left = mpsToRpm(left);
+    right = mpsToRpm(right);
+
+    left = limitVal(left, -MAX_WHEELSPEED_RPM, MAX_WHEELSPEED_RPM);
+    right = limitVal(right, -MAX_WHEELSPEED_RPM, MAX_WHEELSPEED_RPM);
+
+    desiredOutput[static_cast<uint8_t>(MotorId::LF)] = left;
+    desiredOutput[static_cast<uint8_t>(MotorId::LB)] = left;
+    desiredOutput[static_cast<uint8_t>(MotorId::RB)] = right;
+    desiredOutput[static_cast<uint8_t>(MotorId::RF)] = right;
+}
+/* =============================================== */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ### Implement the `refresh` Function
 
@@ -794,34 +833,33 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     /* ... */
->     
->     // STEP 4 (Tank Drive): refresh function
->     void ChassisSubsystem::refresh()
->     {
->         auto runPid = [](Pid &pid, Motor &motor, float desiredOutput) {
->             pid.update(desiredOutput - motor.getShaftRPM());
->             motor.setDesiredOutput(pid.getValue());
->         };
->     
->         for (size_t i = 0; i < motors.size(); i++)
->         {
->             runPid(pidControllers[i], motors[i], desiredOutput[i]);
->         }
->     }
->     /* ================================== */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+/* ... */
+
+// STEP 4 (Tank Drive): refresh function
+void ChassisSubsystem::refresh()
+{
+    auto runPid = [](Pid &pid, Motor &motor, float desiredOutput) {
+        pid.update(desiredOutput - motor.getShaftRPM());
+        motor.setDesiredOutput(pid.getValue());
+    };
+
+    for (size_t i = 0; i < motors.size(); i++)
+    {
+        runPid(pidControllers[i], motors[i], desiredOutput[i]);
+    }
+}
+/* ================================== */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ## Step 3: ChassisTankDriveCommand
 
@@ -869,29 +907,28 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     
->     // STEP 1 (Tank Drive): Constructor
->     ChassisTankDriveCommand::ChassisTankDriveCommand(
->     					ChassisSubsystem &chassis,
->     					ControlOperatorInterface &operatorInterface)
->         : chassis(chassis),
->           operatorInterface(operatorInterface)
->     {
->         addSubsystemRequirement(&chassis);
->     }
->     /* ============================= */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+
+// STEP 1 (Tank Drive): Constructor
+ChassisTankDriveCommand::ChassisTankDriveCommand(
+					ChassisSubsystem &chassis,
+					ControlOperatorInterface &operatorInterface)
+    : chassis(chassis),
+      operatorInterface(operatorInterface)
+{
+    addSubsystemRequirement(&chassis);
+}
+/* ============================= */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ### Implement the `execute` Function
 
@@ -934,32 +971,33 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     /* ... */
->     
->     // STEP 2 (Tank Drive): execute function
->     void ChassisTankDriveCommand::execute()
->     {
->         float left = operatorInterface.getChassisTankLeftInput();
->         float right = operatorInterface.getChassisTankRightInput();
->     
->         left = left * MAX_CHASSIS_SPEED_MPS;
->         right = right * MAX_CHASSIS_SPEED_MPS;
->     
->         chassis.setVelocityTankDrive(left, right);
->     }
->     /* ================================== */
->     
->     /* ... */
->     }  // namespace control::chassis
->     ```
->     
+
+
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+/* ... */
+
+// STEP 2 (Tank Drive): execute function
+void ChassisTankDriveCommand::execute()
+{
+    float left = operatorInterface.getChassisTankLeftInput();
+    float right = operatorInterface.getChassisTankRightInput();
+
+    left = left * MAX_CHASSIS_SPEED_MPS;
+    right = right * MAX_CHASSIS_SPEED_MPS;
+
+    chassis.setVelocityTankDrive(left, right);
+}
+/* ================================== */
+
+/* ... */
+}  // namespace control::chassis
+```
+</details>
 
 ### Implement the `end` Function
 
@@ -991,25 +1029,27 @@ namespace control::chassis
 }  // namespace control::chassis
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control::chassis
->     {
->     /* ... */
->     
->     // STEP 3 (Tank Drive): end function
->     void ChassisTankDriveCommand::end(bool /* interrupted */)
->     {
->         chassis.setVelocityTankDrive(0, 0);
->     }
->     /* ============================== */
->     
->     }  // namespace control::chassis
->     ```
->     
+
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control::chassis
+{
+/* ... */
+
+// STEP 3 (Tank Drive): end function
+void ChassisTankDriveCommand::end(bool /* interrupted */)
+{
+    chassis.setVelocityTankDrive(0, 0);
+}
+/* ============================== */
+
+}  // namespace control::chassis
+```
+
+</details>
+ 
 
 ## Step 4: Robot
 
@@ -1151,36 +1191,36 @@ Robot::Robot(Drivers &drivers) : drivers(drivers),  // add this comma
 }  // namespace contol
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     namespace control
->     {
->     Robot::Robot(Drivers &drivers) : drivers(drivers),
->     // STEP 3 (Tank Drive): construct ChassisSubsystem and ChassisTankDriveCommand
->           chassis(
->               drivers,
->               chassis::ChassisConfig{
->                   .leftFrontId  = MotorId::MOTOR1,
->                   .leftBackId   = MotorId::MOTOR2,
->                   .rightBackId  = MotorId::MOTOR3,
->                   .rightFrontId = MotorId::MOTOR4,
->                   .canBus = CanBus::CAN_BUS1,
->                   .wheelVelocityPidConfig
->                           = modm::Pid<float>::Parameter(10, 0, 0, 0, 16'000),
->               }
->           ),
->           chassisTankDrive(chassis, drivers.controlOperatorInterface)
->     /* ======================================================================== */
->     {
->     }
->     
->     /* ... */
->     }  // namespace contol
->     ```
->     
+
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control
+{
+Robot::Robot(Drivers &drivers) : drivers(drivers),
+// STEP 3 (Tank Drive): construct ChassisSubsystem and ChassisTankDriveCommand
+      chassis(
+          drivers,
+          chassis::ChassisConfig{
+              .leftFrontId  = MotorId::MOTOR1,
+              .leftBackId   = MotorId::MOTOR2,
+              .rightBackId  = MotorId::MOTOR3,
+              .rightFrontId = MotorId::MOTOR4,
+              .canBus = CanBus::CAN_BUS1,
+              .wheelVelocityPidConfig
+                      = modm::Pid<float>::Parameter(10, 0, 0, 0, 16'000),
+          }
+      ),
+      chassisTankDrive(chassis, drivers.controlOperatorInterface)
+/* ======================================================================== */
+{
+}
+
+/* ... */
+}  // namespace contol
+``` 
+</details>
 
 ### Finish Implementing the `initializeSubsystems` Function
 
@@ -1195,19 +1235,18 @@ void Robot::initializeSubsystems()
 }
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     void Robot::initializeSubsystems()
->     {
->         // STEP 4 (Tank Drive): initialize declared ChassisSubsystem
->         chassis.initialize();
->         /* ====================================================== */
->     }
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+void Robot::initializeSubsystems()
+{
+    // STEP 4 (Tank Drive): initialize declared ChassisSubsystem
+    chassis.initialize();
+    /* ====================================================== */
+}
+```
+</details>
 
 ### Finish Implementing the `registerSoldierSubsystems` Function
 
@@ -1224,19 +1263,18 @@ void Robot::registerSoldierSubsystems()
 }
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     void Robot::registerSoldierSubsystems()
->     {
->         // STEP 5 (Tank Drive): register declared ChassisSubsystem
->         drivers.commandScheduler.registerSubsystem(&chassis);
->         /* ==================================================== */
->     }
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+void Robot::registerSoldierSubsystems()
+{
+    // STEP 5 (Tank Drive): register declared ChassisSubsystem
+    drivers.commandScheduler.registerSubsystem(&chassis);
+    /* ==================================================== */
+}
+```
+</details> 
 
 ### Finish Implementing the `setDefaultSoldierCommands` Function
 
@@ -1253,16 +1291,15 @@ void Robot::setDefaultSoldierCommands()
 }
 ```
 
-> Solution
-> 
-> - Click arrow to show…
->     
->     ```cpp
->     void Robot::setDefaultSoldierCommands()
->     {
->         // STEP 6 (Tank Drive): set ChassisTankDriveCommand as default command for ChassisSubsystem
->         chassis.setDefaultCommand(&chassisTankDrive);
->         /* ====================================================================================== */
->     }
->     ```
->     
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+void Robot::setDefaultSoldierCommands()
+{
+    // STEP 6 (Tank Drive): set ChassisTankDriveCommand as default command for ChassisSubsystem
+    chassis.setDefaultCommand(&chassisTankDrive);
+    /* ====================================================================================== */
+}
+```
+</details>
