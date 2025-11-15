@@ -493,6 +493,34 @@ float ControlOperatorInterface::getChassisTankRightInput()
 </details>
 
 
+
+
+Be sure to limit the values returned by the getChannel function between [-1, 1]. Use the limitVal function defined in tap/algorithms/math_user_utils.hpp.
+
+<details>
+<summary>Click to show the solution</summary>
+
+```cpp
+namespace control
+{
+ControlOperatorInterface::ControlOperatorInterface(Remote &remote)
+				: remote(remote) {}
+
+/* your code here... */
+float ControlOperatorInterface::getChassisTankLeftInput() {
+	return limitVal(remote.getChannel(Remote::Channel::LEFT_VERTICAL),float(-1),float(1));
+};
+float ControlOperatorInterface::getChassisTankRightInput() {
+    return limitVal(remote.getChannel(Remote::Channel::RIGHT_VERTICAL),float(-1),float(1));
+}
+/* ================= */
+
+}  // namespace control
+```
+</details>
+
+
+
 ## Step 2: ChassisSubsystem
 
 This class encapsulates the four chassis drive motors and controls them by interpreting chassis movement directives sent by a command. For example, the tank drive command we will be implementing in the next step will be able to direct the chassis subsystem to move the left and/or right wheels forward at 1 m/s. The subsystem will convert this directive into desired motor output commands for all four motors.
