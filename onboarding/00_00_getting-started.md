@@ -1,7 +1,10 @@
----
-layout: onboarding
-title: Getting Started
----
+- [Getting Started](#getting-started)
+  - [Our Goal](#our-goal)
+  - [The Basics](#the-basics)
+    - [The C++ Programming Language](#the-c-programming-language)
+    - [Our Target Board](#our-target-board)
+    - [Taproot API Introduction](#taproot-api-introduction)
+
 
 # Getting Started
 

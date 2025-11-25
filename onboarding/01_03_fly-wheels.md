@@ -1,3 +1,17 @@
+- [Introduction](#introduction)
+- [Cloning Starter Code](#cloning-starter-code)
+- [Step 1: Flywheel Motors](#step-1-flywheel-motors)
+  - [flywheel\_subsystem.hpp](#flywheel_subsystemhpp)
+  - [flywheel\_subsystem.cpp](#flywheel_subsystemcpp)
+  - [flywheel\_subsystem.cpp](#flywheel_subsystemcpp-1)
+- [Step 2: Flywheel On](#step-2-flywheel-on)
+  - [flywheel\_on\_command.hpp](#flywheel_on_commandhpp)
+  - [flywheel\_on\_command.cpp](#flywheel_on_commandcpp)
+- [Step 3:](#step-3)
+  - [ControlOperatorInterface](#controloperatorinterface)
+
+
+
 
 ## Introduction
 By this point, you should have already completed the Tank Drive tutorial and gained a basic understanding of how the Taproot framework works. The purpose of this flywheel tutorial is to give new members a clear, practical understanding of how our robot’s flywheel system works and how to operate it effectively. Flywheels rely on stored rotational energy to launch projectiles with speed and consistency, and their performance depends heavily on motor control, tuning, and mechanical setup. In this guide, we’ll break down the core concepts, explain the hardware and software involved, and walk through the steps needed to configure, test, and refine a reliable flywheel system for competition.
@@ -5,14 +19,29 @@ By this point, you should have already completed the Tank Drive tutorial and gai
 ## Cloning Starter Code
 
 Please clone the following code:
+```bash
+mkdir FlyWheels
+cd FlyWheels
+
+git clone --recursive https://github.com/qkrt-rm/qkrt-mcb-2024.git
 ```
-cd some/project/folder
-git clone --recursive https://github.com/qkrt-rm/qkrt-mcb-2024/tree/flywheel_tut_blank flywheel
+
+After your project has finished downloading, we’ll use Git to switch to the correct branch.
+```bash
+cd qkrt-mcb-2024
+```
+
+The git branch command shows which branch you're currently on.
+The git switch command below will create a new branch based on the blank starter code and switch you to it.
+Make sure to replace YOUR_INITIALS with your own initials..
+
+```bash
+git branch -a
+git switch -c flywheel_tut_YOUR_INITALS flywheel_tut_blank
 ```
 
 Change directory into tank-drive and open Visual Studio Code using the following commands:
-```
-cd tank-drive
+```bash
 code .
 ```
 
@@ -85,7 +114,8 @@ private:
 <details>
 <summary>Solution</summary>
 
-### flywheel_subsystem.hpp
+flywheel_subsystem.hpp
+
 ```cpp
 /*
  * Copyright (c) 2020-2021 Queen's Knights Robotics Team
@@ -146,14 +176,15 @@ private:
 }  
 }  
 ```
+
 </details>
 
 
-<details>
-<summary></summary>
-
-
 ### flywheel_subsystem.cpp
+<details>
+<summary> Solution: </summary>
+
+flywheel_subsystem.cpp
 ```cpp
 /*
  * Copyright (c) 2020-2021 Queen's Knights Robotics Team
