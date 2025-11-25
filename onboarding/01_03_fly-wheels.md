@@ -3,7 +3,6 @@
 - [Step 1: Flywheel Motors](#step-1-flywheel-motors)
   - [flywheel\_subsystem.hpp](#flywheel_subsystemhpp)
   - [flywheel\_subsystem.cpp](#flywheel_subsystemcpp)
-  - [flywheel\_subsystem.cpp](#flywheel_subsystemcpp-1)
 - [Step 2: Flywheel On](#step-2-flywheel-on)
   - [flywheel\_on\_command.hpp](#flywheel_on_commandhpp)
   - [flywheel\_on\_command.cpp](#flywheel_on_commandcpp)
@@ -181,8 +180,6 @@ private:
 
 
 ### flywheel_subsystem.cpp
-<details>
-<summary> Solution: </summary>
 
 flywheel_subsystem.cpp
 ```cpp
@@ -217,13 +214,18 @@ FlywheelSubsystem::FlywheelSubsystem(Drivers& drivers)
 {
 }
         
-//Make the FlywheelSubsystem initialize, refresh, and setDesiredOutput
+//Make the FlywheelSubsystem initialize, refresh, and setDesiredOutput functions
+
+
+
+
 }  // control
 ```
 
-</details>
 
-### flywheel_subsystem.cpp
+<details>
+<summary> Solution: </summary>
+
 ```cpp
 /*
  * Copyright (c) 2020-2021 Queen's Knights Robotics Team
@@ -275,6 +277,9 @@ void FlywheelSubsystem::setDesiredOutput(float output) {
 
 }  // control
 ```
+
+</details>
+
 
 ## Step 2: Flywheel On
 ### flywheel_on_command.hpp
